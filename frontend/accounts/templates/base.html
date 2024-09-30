@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Meu Projeto{% endblock %}</title>
+    <style>
+        /* Estilos da Navbar */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff; /* Fundo branco para o site */
+        }
+
+        nav {
+            background-color: #007BFF; /* Azul para a navbar */
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style-type: none; /* Remove os marcadores da lista */
+            padding: 0; /* Remove o preenchimento padrão */
+            margin: 0; /* Remove a margem padrão */
+            display: flex; /* Exibe os itens em linha */
+        }
+
+        nav li {
+            margin-right: 20px; /* Espaço entre os itens */
+        }
+
+        nav a {
+            color: #ffffff; /* Cor do texto em branco */
+            text-decoration: none; /* Remove o sublinhado dos links */
+            font-weight: bold; /* Torna o texto mais destacado */
+        }
+
+        nav a:hover {
+            text-decoration: underline; /* Sublinha o link ao passar o mouse */
+        }
+
+        /* Estilos do conteúdo */
+        div {
+            padding: 20px; /* Espaçamento do conteúdo */
+        }
+    </style>
+</head>
+<body>
+    <!-- Painel de Navegação -->
+    <nav>
+        <ul>
+            <li><a href="{% url 'criar_mercado' %}">Cadastrar Mercado</a></li>
+            <li><a href="{% url 'listar_mercados' %}">Listar Mercados</a></li>
+            <li><a href="{% url 'criar_transacao' %}">Criar Transação</a></li>
+            <li><a href="{% url 'listar_transacoes' %}">Listar Transações</a></li>
+            <li><a href="{% url 'logout' %}">Sair</a></li>
+        </ul>
+    </nav>
+
+    <!-- Conteúdo Específico de Cada Página -->
+    <div>
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

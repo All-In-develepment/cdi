@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Listagem de Transações{% endblock %}
+
+{% block content %}
+<h1>Listagem de Transações</h1>
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Valor</th>
+            <th>Tipo</th>
+            <th>Odd</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if transacoes %}
+            {% for transacao in transacoes %}
+                <tr>
+                    <td>{{ transacao.valor|default:'' }}</td>
+                    <td>{{ transacao.tipo|default:'' }}</td>
+                    <td>
+                        {% if transacao.odd %}
+                            {{ transacao.odd }}
+                        {% else %}
+                            &nbsp;  <!-- Exibe um espaço em branco se odd for vazio -->
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if transacao.total %}
+                            {{ transacao.total }}
+                        {% else %}
+                            &nbsp;  <!-- Exibe um espaço em branco se total for vazio -->
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="4">Nenhuma transação encontrada.</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<h2>Soma Total: {{ soma_total }}</h2>
+{% endblock %}

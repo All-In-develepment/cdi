@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    {% load static %}  <!-- Carrega a tag static do Django -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"> <!-- Adicione seu arquivo CSS aqui -->
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Login</h2>
+        </div>
+        <form id="login-form" method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="input-group">
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" name="senha" required>
+            </div>
+            <button type="submit" class="btn">Entrar</button>
+            <div class="footer">
+                <a href="{% url 'signup' %}">Cadastre-se</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

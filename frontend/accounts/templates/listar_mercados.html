@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% load static %}  <!-- Carregar a tag static -->
+
+{% block title %}Listagem de Mercados{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if message %}
+        <p class="message">{{ message }}</p>
+    {% elif mercados %}
+        <div class="market-list">
+            {% for mercado in mercados %}
+                <div class="market-item">
+                    <strong>ID:</strong> {{ mercado.id }} <br>
+                    <strong>Nome:</strong> {{ mercado.nome }} <br>
+                    <strong>Usuário:</strong> {{ mercado.usuario.nome }} ({{ mercado.usuario.email }})
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Nenhum mercado encontrado.</p>
+    {% endif %}
+</div>
+{% endblock %}

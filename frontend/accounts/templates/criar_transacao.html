@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Criar Transação{% endblock %}
+
+{% block content %}
+    <h1>Criar Transação</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="valor">Valor:</label>
+        <input type="text" id="valor" name="valor" required><br>
+
+        <label for="tipo">Tipo:</label>
+        <select id="tipo" name="tipo" required>
+            <option value="">---Selecione uma opção---</option>
+            <option value="green">Green</option>
+            <option value="red">Red</option>
+            <option value="aporte">Aporte</option>
+            <option value="retirada">Retirada</option>
+        </select><br>
+
+        <div id="green-fields" style="display:none;">
+            <label for="odd">Odd:</label>
+            <input type="text" id="odd" name="odd"><br>
+            <label for="total">Total:</label>
+            <input type="text" id="total" name="total"><br>
+        </div>
+
+        <button type="submit">Criar Transação</button>
+    </form>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <script>
+        const tipoSelect = document.getElementById('tipo');
+        const greenFields = document.getElementById('green-fields');
+
+        tipoSelect.addEventListener('change', function() {
+            if (this.value === 'green') {
+                greenFields.style.display = 'block';
+            } else {
+                greenFields.style.display = 'none';
+            }
+        });
+    </script>
+{% endblock %}

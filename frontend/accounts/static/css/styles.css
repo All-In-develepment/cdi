@@ -1,0 +1,204 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+input:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+.btn {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.footer a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+
+
+
+
+
+
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: white; /* Fundo branco */
+    color: black; /* Texto preto */
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: #007BFF; /* Azul */
+    padding: 15px;
+    display: flex; /* Para que os itens fiquem na mesma linha */
+    justify-content: space-around; /* Espaçamento igual entre os itens */
+    color: white;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex; /* Mantém os links em linha */
+    padding: 0;
+    margin: 0;
+}
+
+.nav-links li {
+    margin: 0 20px; /* Espaçamento entre os links */
+}
+
+.nav-links a {
+    color: white; /* Cor do texto dos links */
+    text-decoration: none; /* Remove o sublinhado */
+    padding: 10px;
+    transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: #0056b3; /* Azul mais escuro ao passar o mouse */
+}
+
+.container {
+    padding: 20px;
+}
+
+.market-list {
+    display: flex; /* Apresenta a listagem em linha */
+    flex-wrap: wrap; /* Permite que os itens voltem para a linha seguinte se necessário */
+    gap: 20px; /* Espaçamento entre os itens */
+}
+
+.market-item {
+    background-color: #f8f9fa; /* Fundo claro para os itens */
+    border: 1px solid #ced4da; /* Borda cinza clara */
+    border-radius: 5px;
+    padding: 15px;
+    flex: 1 1 30%; /* Faz os itens ocuparem 30% da largura */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.market-item strong {
+    color: #343A40; /* Cor para os títulos */
+}
+
+
+
+
+
+
+
+
+/* styles.css */
+
+/* Estilo para a página de transações */
+body {
+    background-color: white; /* Fundo branco para o site */
+    font-family: Arial, sans-serif; /* Fonte padrão */
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #333; /* Cor do título */
+    margin-bottom: 20px; /* Espaçamento abaixo do título */
+}
+
+h2 {
+    color: #333; /* Cor do subtítulo */
+    margin-top: 20px; /* Espaçamento acima do subtítulo */
+}
+
+table {
+    width: 100%; /* Tabela ocupa toda a largura */
+    border-collapse: collapse; /* Colapsa as bordas da tabela */
+    margin-top: 20px; /* Espaçamento acima da tabela */
+}
+
+th, td {
+    padding: 10px; /* Espaçamento dentro das células */
+    text-align: left; /* Alinhamento do texto à esquerda */
+    border: 1px solid #ccc; /* Borda leve nas células */
+}
+
+th {
+    background-color: #007BFF; /* Fundo azul para cabeçalhos */
+    color: white; /* Texto branco nos cabeçalhos */
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Fundo cinza claro para linhas pares */
+}
+
+tr:hover {
+    background-color: #d1e7dd; /* Fundo verde claro ao passar o mouse */
+}
+
+ul {
+    margin: 10px 0; /* Margem para a lista de mensagens */
+    padding: 10px; /* Padding para a lista de mensagens */
+    background-color: #f8d7da; /* Fundo vermelho claro para mensagens */
+    border: 1px solid #f5c6cb; /* Borda para mensagens */
+    border-radius: 5px; /* Bordas arredondadas */
+}
+
+li {
+    color: #721c24; /* Cor do texto das mensagens */
+}
+
