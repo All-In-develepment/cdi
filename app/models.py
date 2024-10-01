@@ -1,4 +1,10 @@
+
+
 from flask_sqlalchemy import SQLAlchemy
+
+# Adicione o diretório 'Carteira_Davi' ao sys.path
+
+
 
 db = SQLAlchemy()
 

@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import redirect, render_template, request, jsonify, url_for
 from .models import db, Usuario, Mercado, Transacao
 from flask import current_app as app
 from werkzeug.security import generate_password_hash
@@ -252,32 +252,32 @@ def register_routes():
 
 
     # Rota para listar mercados de um usuário específico
-    @app.route('/mercado/usuario/<int:usuario_id>', methods=['GET'])
-    def listar_mercados_por_usuario(usuario_id):
-        usuario = Usuario.query.get(usuario_id)
-        if not usuario:
-            return jsonify({"error": "Usuário não encontrado."}), 404
+    # @app.route('/mercado/usuario/<int:usuario_id>', methods=['GET'])
+    # def listar_mercados_por_usuario(usuario_id):
+    #     usuario = Usuario.query.get(usuario_id)
+    #     if not usuario:
+    #         return jsonify({"error": "Usuário não encontrado."}), 404
 
-        mercados = Mercado.query.filter_by(usuario_id=usuario_id).all()
+    #     mercados = Mercado.query.filter_by(usuario_id=usuario_id).all()
         
-        if not mercados:
-            return jsonify({"message": "Nenhum mercado encontrado para este usuário."}), 200
+    #     if not mercados:
+    #         return jsonify({"message": "Nenhum mercado encontrado para este usuário."}), 200
 
-        return jsonify([{
-            "id": mercado.id,
-            "nome": mercado.nome,
-            "usuario": {
-                "id": usuario.id,
-                "nome": usuario.nome,
-                "email": usuario.email
-            }
-        } for mercado in mercados]), 200
-
-
+    #     return jsonify([{
+    #         "id": mercado.id,
+    #         "nome": mercado.nome,
+    #         "usuario": {
+    #             "id": usuario.id,
+    #             "nome": usuario.nome,
+    #             "email": usuario.email
+    #         }
+    #     } for mercado in mercados]), 200
 
 
 
 
+
+    # rota para atualizar mercado 
     @app.route('/mercado/<int:id>', methods=['PUT'])
     def atualizar_mercado(id):
         mercado = Mercado.query.get(id)
@@ -285,11 +285,28 @@ def register_routes():
             return jsonify({"error": "Mercado não encontrado."}), 404
 
         data = request.get_json()
-        mercado.nome = data.get('nome', mercado.nome)
-        mercado.usuario_id = data.get('usuario_id', mercado.usuario_id)
-        db.session.commit()
 
-        return jsonify({"message": "Mercado atualizado com sucesso!"}), 200
+        # Atualizando apenas o nome
+        mercado.nome = data.get('nome', mercado.nome)
+
+        try:
+            db.session.commit()
+            return jsonify({
+                "message": "Mercado atualizado com sucesso.",
+                "mercado": {
+                    "id": mercado.id,
+                    "nome": mercado.nome,
+                    "usuario_id": mercado.usuario_id
+                }
+            }), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 500
+
+
+  
+
+
 
     @app.route('/mercado/<int:id>', methods=['PATCH'])
     def atualizar_parcial_mercado(id):
@@ -315,29 +332,69 @@ def register_routes():
         db.session.commit()
         return jsonify({"message": "Mercado deletado com sucesso!"}), 200
 
+
+
+    #rota para editar mercado por usuario 
+
+
+    @app.route('/mercado/usuario/<int:usuario_id>', methods=['GET'])
+    def listar_mercados_por_usuario(usuario_id):
+        usuario = Usuario.query.get(usuario_id)
+        if not usuario:
+            return jsonify({"error": "Usuário não encontrado."}), 404
+
+        mercados = Mercado.query.filter_by(usuario_id=usuario_id).all()
+        
+        if not mercados:
+            return jsonify({"message": "Nenhum mercado encontrado para este usuário."}), 200
+
+        return jsonify([{
+            "id": mercado.id,
+            "nome": mercado.nome,
+            "usuario": {
+                "id": usuario.id,
+                "nome": usuario.nome,
+                "email": usuario.email
+            }
+        } for mercado in mercados]), 200
+
+
+
+
+
     # CRUD para Transação
     
     @app.route('/transacoes', methods=['POST'])
     def criar_transacao():
         data = request.get_json()
-        
+
         valor = data.get('valor')
         tipo = data.get('tipo')
         odd = data.get('odd', None)
-        total = data.get('total', None)
         usuario_id = data.get('usuario_id')
-        
+
         if not valor or not tipo or not usuario_id:
             return jsonify({"error": "Todos os campos (valor, tipo, usuario_id) são obrigatórios."}), 400
-        
+
         try:
             # Validação específica para tipos de transação
-            if tipo == 'green' and (not odd or total is None):
-                return jsonify({"error": "Campos 'odd' e 'total' são obrigatórios para transações do tipo green."}), 400
-            
+            if tipo == 'green':
+                if not odd:
+                    return jsonify({"error": "Campo 'odd' é obrigatório para transações do tipo green."}), 400
+                
+                # Calcular o total automaticamente
+                total = float(valor) * float(odd)
+
+            elif tipo == 'red':
+                odd = None  # Não precisa de odd para transações do tipo red
+                total = None  # Não precisa de total para red
+            elif tipo == 'aporte' or tipo == 'retirada':
+                odd = None  # Não precisa de odd para esses tipos
+                total = None  # Não precisa de total para esses tipos
+
             # Cria uma nova transação com os dados fornecidos
             nova_transacao = Transacao(valor=valor, tipo=tipo, odd=odd, total=total, usuario_id=usuario_id)
-            
+
             # Adiciona ao banco de dados
             db.session.add(nova_transacao)
             db.session.commit()
@@ -425,7 +482,7 @@ def register_routes():
 
 
 
-    @app.route('/transacao/<int:id>', methods=['PUT'])
+    @app.route('/transacao/usuario/<int:id>', methods=['PUT'])
     def atualizar_transacao(id):
         transacao = Transacao.query.get(id)
         if not transacao:
@@ -467,5 +524,21 @@ def register_routes():
 
 
 
+    @app.route('/transacao/editar/<int:transacao_id>', methods=['GET', 'POST'])
+    def editar_transacao(transacao_id):
+        transacao = Transacao.query.get(transacao_id)
+        if not transacao:
+            return jsonify({"error": "Transação não encontrada."}), 404
 
+        if request.method == 'POST':
+            novo_valor = request.form.get('valor')
+            novo_tipo = request.form.get('tipo')
 
+            # Atualiza os valores da transação
+            transacao.valor = float(novo_valor)
+            transacao.tipo = novo_tipo
+            db.session.commit()
+
+            return redirect(url_for('listar_transacoes_por_usuario', usuario_id=transacao.usuario_id))
+
+        return render_template('editar_transacao.html', transacao=transacao)

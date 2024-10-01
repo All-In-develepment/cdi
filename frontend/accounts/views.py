@@ -1,9 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 import requests
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from django.http import JsonResponse
+
+
+
+
+
+
 from .models import Mercado, Usuario
 from django.contrib.auth.decorators import login_required  # Verifica se o usuário está autenticado
 import json
@@ -254,7 +260,7 @@ def criar_transacao(request):
         valor = request.POST.get('valor')
         tipo = request.POST.get('tipo')
         odd = request.POST.get('odd', None)  # Campo opcional para odds
-        total = request.POST.get('total', None)  # Campo opcional para total ganho/perda
+        # total = request.POST.get('total', None)  # Campo opcional para total ganho/perda
 
         usuario_id = request.session.get('usuario_id')
 
@@ -262,27 +268,15 @@ def criar_transacao(request):
             return JsonResponse({"error": "Todos os campos (valor, tipo) são obrigatórios."}, status=400)
 
         # Ajuste os dados conforme o tipo de transação
-        if tipo == 'green':
-            if not odd or total is None:
-                return JsonResponse({"error": "Campos 'odd' e 'total' são obrigatórios para transações do tipo green."}, status=400)
-        elif tipo == 'red':
-            # Aqui você pode adicionar lógica específica para 'red', como calcular perdas
-            odd = None  # Defina odd como None para transações do tipo red
-            total = None  # Não precisa de total para red
-        elif tipo == 'aporte':
-            odd = None  # Defina odd como None para transações do tipo red
-            total = None  # Aporte geralmente é um depósito, sem total específico
-        elif tipo == 'retirada':
-            odd = None  # Defina odd como None para transações do tipo red
-            total = None  # Retirada é o valor retirado, sem total específico
-
+        if tipo == 'green' and not odd:
+            return JsonResponse({"error": "Campo 'odd' é obrigatório para transações do tipo green."}, status=400)
+        
         # Interagir com a API Flask
         url = 'http://api:5000/transacoes'
         data = {
             'valor': valor,
             'tipo': tipo,
             'odd': odd,
-            'total': total,
             'usuario_id': usuario_id
         }
         
@@ -348,3 +342,59 @@ def listar_transacoes(request):
 
     except requests.exceptions.RequestException as e:
         return JsonResponse({"error": f"Erro ao conectar com o backend: {str(e)}"}, status=500)
+
+
+
+
+
+
+# views para editar mercado 
+
+
+@token_required  
+def editar_mercado(request, id):
+    token = request.session.get('token')
+    
+    if not token:
+        messages.error(request, "Autenticação necessária. Faça login para continuar.")
+        return redirect('custom_login_view')
+
+    headers = {
+        'Authorization': f'Bearer {token}'
+    }
+
+    # Buscar os dados do mercado atual para exibição no formulário
+    url_get = f'http://api:5000/mercado/{id}'  # URL para buscar mercado pelo ID
+    response_get = requests.get(url_get, headers=headers)
+    
+    if response_get.status_code != 200:
+        messages.error(request, "Erro ao buscar informações do mercado.")
+        return redirect('listar_mercados')
+
+    mercado = response_get.json().get('mercado')
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+
+        # Preparar os dados para enviar para a API Flask
+        data = {'nome': nome}
+
+        # Atualizar o mercado via API Flask
+        url = f'http://api:5000/mercado/{id}'  # Atualizando o mercado pelo ID
+        response = requests.put(url, json=data, headers=headers)
+
+        if response.status_code == 200:
+            messages.success(request, "Mercado atualizado com sucesso.")
+            return redirect('listar_mercados')
+        else:
+            messages.error(request, "Erro ao atualizar o mercado.")
+            return redirect('editar_mercado', id=id)
+
+    return render(request, 'editar_mercado.html', {'mercado': mercado})
+
+
+
+
+
+
+

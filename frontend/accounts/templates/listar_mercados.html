@@ -58,3 +58,24 @@
       </div>
   </div>
 {% endblock %}
+
+
+
+
+
+
+{% for mercado in mercados %}
+  <tr>
+    <td>
+      <div class="d-flex px-2 py-1">
+        {{ mercado.id }}
+      </div>
+    </td>
+    <td>{{ mercado.nome }}</td>
+    <td class="align-middle">
+      <a href="{% url 'editar_mercado' mercado.id %}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Editar mercado">
+        Editar
+      </a>
+    </td>
+  </tr>
+{% endfor %}

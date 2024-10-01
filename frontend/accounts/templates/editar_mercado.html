@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Editar Mercado: {{ mercado.nome }}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="nome">Nome do Mercado:</label>
+        <input type="text" class="form-control" id="nome" name="nome" value="{{ mercado.nome }}" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a href="{% url 'listar_mercados' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+
+{% endblock %}
