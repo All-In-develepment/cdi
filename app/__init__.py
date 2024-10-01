@@ -4,7 +4,7 @@ from .routes import register_routes
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5432/cdi_db?client_encoding=utf8'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@db:5432/cdi_db?client_encoding=utf8'
     db.init_app(app)
     app.config['SECRET_KEY'] = 'minhachavekey'
     # Registrar as rotas
@@ -12,4 +12,3 @@ def create_app():
         register_routes()
 
     return app
-

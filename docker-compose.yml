@@ -10,5 +10,27 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    restart: always
+    container_name: api-cdi
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+
+  front:
+    build:
+      context: frontend/.
+      dockerfile: Dockerfile.front
+    restart: always
+    container_name: front-cdi
+    depends_on:
+      - api
+    ports:
+      - "8000:8000"
+
 volumes:
   db_data:

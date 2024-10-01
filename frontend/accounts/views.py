@@ -28,7 +28,7 @@ def token_required(view_func):
             return redirect('login')  # Redireciona para a página de login se não houver token
 
         # Aqui você pode validar o token com a API Flask, se necessário
-        response = requests.get('http://localhost:5000/protected', headers = {'Authorization': f'Bearer {token}'})
+        response = requests.get('http://api:5000/protected', headers = {'Authorization': f'Bearer {token}'})
         # print(response.json)
         if response.status_code != 200:
             return redirect('login')  # Redireciona para a página de login se o token for inválido
@@ -59,7 +59,7 @@ def custom_login_view(request):
 
         # Faz a requisição para a API Flask de autenticação
         try:
-            response = requests.post('http://localhost:5000/login', json={
+            response = requests.post('http://api:5000/login', json={
                 'email': email,
                 'senha': senha
             })
@@ -95,7 +95,7 @@ def custom_login_view(request):
 #         senha = request.POST.get('senha')
 
 #         # Fazer a requisição para a API
-#         response = requests.post('http://localhost:5000/login', json={
+#         response = requests.post('http://api:5000/login', json={
 #             'email': email,
 #             'senha': senha
 #         })
@@ -119,7 +119,7 @@ def custom_login_view(request):
 
 def authenticate_user(email, senha):
     # Fazer a requisição para a API de autenticação
-    response = requests.post('http://localhost:5000/login', json={
+    response = requests.post('http://api:5000/login', json={
         'email': email,
         'senha': senha
     })
@@ -156,7 +156,7 @@ def criar_mercado(request):
             return JsonResponse({"error": "O campo nome é obrigatório."}, status=400)
 
         # Interagir com a API Flask
-        url = 'http://localhost:5000/mercados'
+        url = 'http://api:5000/mercados'
         data = {
             'nome': nome,
             'usuario_id': usuario_id
@@ -190,9 +190,6 @@ def custom_logout_view(request):
 
 
 
-
-
-
 @token_required  
 def listar_mercados(request):
         # Verifica se o token está armazenado na sessão
@@ -215,7 +212,7 @@ def listar_mercados(request):
 
         # Faz a requisição GET para o backend Flask
         try:
-            response = requests.get(f'http://localhost:5000/mercado/usuario/{usuario_id}', headers=headers)
+            response = requests.get(f'http://api:5000/mercado/usuario/{usuario_id}', headers=headers)
 
             if response.status_code == 200:
                 data = response.json()
@@ -280,7 +277,7 @@ def criar_transacao(request):
             total = None  # Retirada é o valor retirado, sem total específico
 
         # Interagir com a API Flask
-        url = 'http://localhost:5000/transacoes'
+        url = 'http://api:5000/transacoes'
         data = {
             'valor': valor,
             'tipo': tipo,
@@ -317,7 +314,7 @@ def listar_transacoes(request):
     
     usuario_id = request.session.get('usuario_id')
     try:
-        response = requests.get(f'http://localhost:5000/transacao/usuario/{usuario_id}', headers=headers)
+        response = requests.get(f'http://api:5000/transacao/usuario/{usuario_id}', headers=headers)
 
         if response.status_code == 200:
             data = response.json()
