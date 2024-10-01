@@ -6,9 +6,6 @@ from werkzeug.security import check_password_hash
 import datetime
 import jwt
 
-
-
-
 def register_routes():
     @app.route('/', methods=['GET'])
     def home():

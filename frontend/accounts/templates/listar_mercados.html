@@ -1,25 +1,60 @@
 {% extends 'base.html' %}
 
-{% load static %}  <!-- Carregar a tag static -->
-
 {% block title %}Listagem de Mercados{% endblock %}
 
 {% block content %}
-<div class="container">
-    {% if message %}
-        <p class="message">{{ message }}</p>
-    {% elif mercados %}
-        <div class="market-list">
-            {% for mercado in mercados %}
-                <div class="market-item">
-                    <strong>ID:</strong> {{ mercado.id }} <br>
-                    <strong>Nome:</strong> {{ mercado.nome }} <br>
-                    <strong>Usuário:</strong> {{ mercado.usuario.nome }} ({{ mercado.usuario.email }})
-                </div>
-            {% endfor %}
+  <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header pb-0">
+            <h6>Mercados</h6>
+            <div class="d-flex justify-content-end mb-3">
+              <a class="btn btn-success" href="{% url 'criar_mercado' %}">Criar Mercado</a>
+            </div>
+          </div>
+          {% if message %}
+            <p class="message">{{ message }}</p>
+          {% endif %}
+          {% if mercados %}
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        ID
+                      </th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" colspan=2>
+                        Nome
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for mercado in mercados %}
+                      <tr>
+                        <td>
+                          <div class="d-flex px-2 py-1">
+                            {{ mercado.id }}
+                          </div>
+                        </td>
+                        <td>{{ mercado.nome }}</td>
+                        <td class="align-middle">
+                          <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                            Edit
+                          </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {% else %}
+              <p>Nenhum mercado encontrado.</p>
+            {% endif %}
+          </div>
         </div>
-    {% else %}
-        <p>Nenhum mercado encontrado.</p>
-    {% endif %}
-</div>
+      </div>
+  </div>
 {% endblock %}

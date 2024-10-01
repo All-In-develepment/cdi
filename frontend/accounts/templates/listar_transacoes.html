@@ -3,54 +3,99 @@
 {% block title %}Listagem de Transações{% endblock %}
 
 {% block content %}
-<h1>Listagem de Transações</h1>
-
-{% if messages %}
-    <ul>
-        {% for message in messages %}
-            <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
-
-<table>
-    <thead>
-        <tr>
-            <th>Valor</th>
-            <th>Tipo</th>
-            <th>Odd</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% if transacoes %}
-            {% for transacao in transacoes %}
-                <tr>
-                    <td>{{ transacao.valor|default:'' }}</td>
-                    <td>{{ transacao.tipo|default:'' }}</td>
-                    <td>
-                        {% if transacao.odd %}
-                            {{ transacao.odd }}
+  <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header pb-0">
+            <h5>Transações</h5>
+            <div class="d-flex justify-content-end mb-3">
+              <a class="btn btn-success" href="{% url 'criar_transacao' %}">Cadastrar Trasação</a>
+            </div>
+          </div>
+          {% if messages %}
+            <p class="message">{{ message }}</p>
+          {% endif %}
+          {% if transacoes%}
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        Valor
+                      </th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                        Tipo
+                      </th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                        Odd
+                      </th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                        Total
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for transacao in transacoes %}
+                      <tr>
+                        <td>
+                          <div class="d-flex px-2 py-1">
+                            {% if transacao.tipo == 'red' or transacao.tipo == 'retirada' %}
+                            <div class="d-flex align-items-center text-danger text-gradient font-weight-bold">
+                              - R$ {{ transacao.valor }}
+                            </div>
+                            {% else %}
+                              <div class="d-flex align-items-center text-success text-gradient font-weight-bold">
+                                + R$ {{ transacao.valor }}
+                              </div>
+                            {% endif %}
+                          </div>
+                        </td>
+                        <td>
+                          {% if transacao.tipo == 'red' %}
+                            <span class="badge badge-sm bg-gradient-danger">{{ transacao.tipo }}</span>
+                          {% elif transacao.tipo == 'retirada' %}
+                            <span class="badge badge-sm bg-gradient-warning">{{ transacao.tipo }}</span>
+                          {% elif transacao.tipo == 'aporte' %}
+                            <span class="badge badge-sm bg-gradient-info">{{ transacao.tipo }}</span>
+                          {% else %}
+                            <span class="badge badge-sm bg-gradient-success">{{ transacao.tipo }}</span>
+                          {% endif %}
+                        </td>
+                        <td>
+                          {{ transacao.odd }}
+                        </td>
+                        <td>{{ transacao.total }}</td>
+                      </tr>
+                    {% endfor %}
+                    <tr>
+                      <td colspan=3>
+                        <h4>Soma Total:</h4>
+                      </td>
+                      <td>
+                        {% if soma_total > 0 %}
+                          <div class="d-flex align-items-center text-success text-gradient font-weight-bold">
+                            <h4>R$ {{ soma_total }}</h4>
+                          </div>
                         {% else %}
-                            &nbsp;  <!-- Exibe um espaço em branco se odd for vazio -->
+                          <div class="d-flex align-items-center text-danger text-gradient font-weight-bold">
+                            <h4>R$ {{ soma_total }}</h4>
+                          </div>
                         {% endif %}
-                    </td>
-                    <td>
-                        {% if transacao.total %}
-                            {{ transacao.total }}
-                        {% else %}
-                            &nbsp;  <!-- Exibe um espaço em branco se total for vazio -->
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        {% else %}
-            <tr>
-                <td colspan="4">Nenhuma transação encontrada.</td>
-            </tr>
-        {% endif %}
-    </tbody>
-</table>
-
-<h2>Soma Total: {{ soma_total }}</h2>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {% else %}
+              <div class="card-footer pb-0">
+                <h4>Nenhuma transação encontrada.</h4>
+              </div>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
