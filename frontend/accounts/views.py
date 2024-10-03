@@ -4,11 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from django.http import JsonResponse
-
-
-
-
-
+import datetime
 
 from .models import Mercado, Usuario
 from django.contrib.auth.decorators import login_required  # Verifica se o usuário está autenticado
@@ -236,14 +232,6 @@ def listar_mercados(request):
             # Lidar com erro de conexão ou outros problemas na requisição
             return JsonResponse({"error": f"Erro ao conectar com o backend: {str(e)}"}, status=500)
 
-
-
-
-
-
-
-
-
 @token_required 
 def criar_transacao(request):
     token = request.session.get('token')
@@ -260,27 +248,32 @@ def criar_transacao(request):
         valor = request.POST.get('valor')
         tipo = request.POST.get('tipo')
         odd = request.POST.get('odd', None)  # Campo opcional para odds
-        # total = request.POST.get('total', None)  # Campo opcional para total ganho/perda
-
         usuario_id = request.session.get('usuario_id')
+
+        # Definir a data de transação como ISO 8601 (string)
+        data_transacao = datetime.datetime.now().isoformat()
 
         if not valor or not tipo or not usuario_id:
             return JsonResponse({"error": "Todos os campos (valor, tipo) são obrigatórios."}, status=400)
 
-        # Ajuste os dados conforme o tipo de transação
         if tipo == 'green' and not odd:
             return JsonResponse({"error": "Campo 'odd' é obrigatório para transações do tipo green."}, status=400)
         
-        # Interagir com a API Flask
+        # Dados a serem enviados para a API Flask
         url = 'http://api:5000/transacoes'
         data = {
             'valor': valor,
             'tipo': tipo,
             'odd': odd,
-            'usuario_id': usuario_id
+            'usuario_id': usuario_id,
+            'data_transacao': data_transacao  # Garantir que seja uma string no formato ISO
         }
         
-        response = requests.post(url, json=data, headers=headers)
+        try:
+            response = requests.post(url, json=data, headers=headers)
+            response.raise_for_status()  # Lançar exceção para códigos de erro HTTP
+        except requests.RequestException as e:
+            return JsonResponse({"error": "Erro ao conectar com o servidor. Tente novamente mais tarde."}, status=500)
 
         if response.status_code == 201:
             return redirect('listar_transacoes')
@@ -288,6 +281,7 @@ def criar_transacao(request):
             return JsonResponse(response.json(), status=response.status_code)
 
     return render(request, 'criar_transacao.html')
+
 
 
 
@@ -343,14 +337,7 @@ def listar_transacoes(request):
     except requests.exceptions.RequestException as e:
         return JsonResponse({"error": f"Erro ao conectar com o backend: {str(e)}"}, status=500)
 
-
-
-
-
-
 # views para editar mercado 
-
-
 @token_required  
 def editar_mercado(request, id):
     token = request.session.get('token')
@@ -392,9 +379,62 @@ def editar_mercado(request, id):
 
     return render(request, 'editar_mercado.html', {'mercado': mercado})
 
+# Dashboard
+@token_required  
+def dashboard(request):
+    token = request.session.get('token')
+    if not token:
+        messages.error(request, "Autenticação necessária. Faça login para continuar.")
+        return redirect('custom_login_view')
 
+    headers = {
+        'Authorization': f'Bearer {token}'
+    }
+    
+    usuario_id = request.session.get('usuario_id')
+    try:
+        response = requests.get(f'http://api:5000/transacao/usuario/{usuario_id}', headers=headers)
 
+        if response.status_code == 200:
+            data = response.json()
 
+            if 'message' in data:
+                return render(request, 'listar_transacoes.html', {'message': data['message']})
 
+            # Calcular a soma total
+            soma_total = 0
+            for transacao in data['transacoes']:
+                tipo = transacao.get('tipo')
+                valor = float(transacao.get('valor', 0))
 
+                if tipo == 'green' and transacao.get('total') not in [None, '']:
+                    # Green: somar o valor total (valor * odd)
+                    soma_total += float(transacao['total'])
+                elif tipo == 'red':
+                    # Red: subtrair o valor da transação
+                    soma_total -= valor
+                elif tipo == 'aporte':
+                    # Aporte: somar o valor da transação
+                    soma_total += valor
+                elif tipo == 'retirada':
+                    # Retirada: subtrair o valor da transação
+                    soma_total -= valor
+            
+            data_hoje = datetime.datetime.now().date()
+            
+            # Defina o formato da data e hora que está sendo retornado pela API (ajuste conforme necessário)
+            formato_data = '%a, %d %b %Y %H:%M:%S %Z'  # Ajuste se necessário
+            print(data_hoje)
+            
+            total_hoje = sum(
+                float(transacao['valor']) for transacao in data['transacoes']
+                    if datetime.datetime.strptime(transacao['data_transacao'], formato_data).date() == data_hoje
+            )
+            
+            # Passar a lista de transações corretamente
+            return render(request, 'dashboard.html', {'transacoes': data['transacoes'], 'soma_total': soma_total, 'data_hoje': data_hoje, 'total_hoje': total_hoje})
 
+        return JsonResponse({"error": "Erro ao buscar as transações"}, status=response.status_code)
+
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({"error": f"Erro ao conectar com o backend: {str(e)}"}, status=500)

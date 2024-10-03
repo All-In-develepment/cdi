@@ -372,6 +372,7 @@ def register_routes():
         tipo = data.get('tipo')
         odd = data.get('odd', None)
         usuario_id = data.get('usuario_id')
+        data_transacao = datetime.datetime.now()
 
         if not valor or not tipo or not usuario_id:
             return jsonify({"error": "Todos os campos (valor, tipo, usuario_id) são obrigatórios."}), 400
@@ -393,7 +394,7 @@ def register_routes():
                 total = None  # Não precisa de total para esses tipos
 
             # Cria uma nova transação com os dados fornecidos
-            nova_transacao = Transacao(valor=valor, tipo=tipo, odd=odd, total=total, usuario_id=usuario_id)
+            nova_transacao = Transacao(valor=valor, tipo=tipo, odd=odd, total=total, usuario_id=usuario_id, data_transacao=data_transacao)
 
             # Adiciona ao banco de dados
             db.session.add(nova_transacao)
@@ -407,20 +408,14 @@ def register_routes():
                     "tipo": nova_transacao.tipo,
                     "odd": nova_transacao.odd,
                     "total": nova_transacao.total,
-                    "usuario_id": nova_transacao.usuario_id
+                    "usuario_id": nova_transacao.usuario_id,
+                    "data_transacao": nova_transacao.data_transacao
                 }
             }), 201
 
         except Exception as e:
             db.session.rollback()  # Desfaz a transação em caso de erro
-            return jsonify({"error": str(e)}), 500
-
-        
-        
-    
-    
-    
-    
+            return jsonify({"error": str(e.args)}), 500
     
     @app.route('/transacao/<int:id>', methods=['GET'])
     def obter_transacao(id):
@@ -469,7 +464,8 @@ def register_routes():
                 "valor": transacao.valor,
                 "tipo": transacao.tipo,
                 "odd": transacao.odd if transacao.odd is not None else '',  # Deixa vazio se None
-                "total": transacao.total if transacao.total is not None else ''  # Deixa vazio se None
+                "total": transacao.total if transacao.total is not None else '',  # Deixa vazio se None
+                "data_transacao": transacao.data_transacao
             } for transacao in transacoes],
             "soma_total": soma_total
         }), 200

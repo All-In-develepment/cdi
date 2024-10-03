@@ -13,12 +13,12 @@
 					<form method="post">
 						{% csrf_token %}
 						<div class="row">
-							<div class="col-md-6">
+							<div class="col-md-4">
 								<label for="valor">Valor</label>
 								<input type="text" id="valor" name="valor" class="form-control form-control-alternative" placeholder="Valor" required>
 							</div>
 							
-							<div class="col-md-6">
+							<div class="col-md-4">
 								<label for="tipo">Tipo</label>
 								<select id="tipo" name="tipo" class="form-control" required>
 									<option value="">---Selecione uma opção---</option>
@@ -27,6 +27,10 @@
 									<option value="aporte">Aporte</option>
 									<option value="retirada">Retirada</option>
 								</select><br>
+							</div>
+							<div class="col-md-4">
+								<label for="data_transacao">Data</label>
+								<input type="date" id="data_transacao" name="data_transacao" class="form-control form-control-alternative" required>
 							</div>
 						</div>
 						<div id="green-fields" style="display:none;">

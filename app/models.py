@@ -26,3 +26,4 @@ class Transacao(db.Model):
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
     odd = db.Column(db.Float)
     total = db.Column(db.Float)
+    data_transacao = db.Column(db.DateTime)

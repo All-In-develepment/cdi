@@ -16,4 +16,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 
 # Comando para rodar a aplicação
-CMD alembic upgrade head && python run.py
+CMD alembic upgrade head && python -u run.py
