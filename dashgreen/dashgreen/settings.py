@@ -141,3 +141,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Redireciona usuários não autenticados para esta URL
 LOGIN_URL = '/contas/login/'
+
+CSRF_TRUSTED_ORIGINS = ['https://app.dashgreen.com.br']
