@@ -1,0 +1,9 @@
+<h2>Deletar Transação</h2>
+
+<p>Você tem certeza que deseja deletar a transação de {{ object.valor }}?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Sim, deletar</button>
+    <a href="{% url 'transacao-list' %}">Cancelar</a>
+</form>
