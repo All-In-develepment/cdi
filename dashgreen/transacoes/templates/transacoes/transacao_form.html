@@ -1,0 +1,30 @@
+{% extends 'dashgreen/base.html' %}
+
+{% block title %}{{ view.object.pk|yesno:"Editar Transação,Criar Nova Transação" }}{% endblock %}
+
+{% block content %}
+
+	<div class="row mt-4">
+		<div class="col-lg-12 mb-lg-0 mb-4">
+			<div class="card ">
+				<div class="card-header pb-0 p-3">
+					<div class="d-flex justify-content-between">
+						<h4>{{ view.object.pk|yesno:"Editar Transação,Criar Nova Transação" }}</h4>
+					</div>
+				</div>
+
+				<form method="POST">
+					{% csrf_token %}
+					{{ form.as_p }}
+					<button class="btn btn-success" type="submit">Salvar</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<a href="{% url 'transacao-list' %}">
+		<button class="btn btn-secondary">Voltar para Lista</button>
+	</a>
+
+{% endblock %}

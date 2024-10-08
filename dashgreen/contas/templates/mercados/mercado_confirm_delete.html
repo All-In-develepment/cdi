@@ -1,0 +1,9 @@
+<h2>Deletar Mercado</h2>
+
+<p>Você tem certeza que deseja deletar o mercado "{{ object.nome }}"?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Sim, deletar</button>
+    <a href="{% url 'mercado-list' %}">Cancelar</a>
+</form>
