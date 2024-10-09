@@ -50,11 +50,11 @@ def home_view(request):
     # Retorna apenas as transações do usuário autenticado
     
     # lista todas as tranções do tipo aposta e soma os valores do campo retorno e e valor
-    total_por_mercado = Transacao.objects.filter(usuario=request.user, tipo='Aposta').values('mercado__nome','resultado').annotate(total_valor=Sum('valor'), total_retorno=Sum('retorno'))
-    listagem = Transacao.objects.filter(usuario=request.user).values('mercado__nome', 'mercado__color').annotate(total=Count('id'))
+    total_por_mercado = Transacao.objects.filter(usuario=request.user, tipo='Aposta').values('id','mercado__nome','resultado').annotate(total_valor=Sum('valor'), total_retorno=Sum('retorno'))
+    listagem = Transacao.objects.filter(usuario=request.user, tipo='Aposta').values('mercado__nome', 'mercado__color').annotate(total=Count('id'))
     
     # Calcular o total geral de apostas
-    total_apostas = sum(dado['total_valor'] for dado in total_por_mercado)
+    total_apostas = len(total_por_mercado)
     
     # Dicionário para armazenar os resultados finais por mercado
     resultados_por_mercado = {}
@@ -62,23 +62,31 @@ def home_view(request):
     # Processar os dados para fazer a subtração de 'Red' de 'Green'
     for dado in total_por_mercado:
         mercado_nome = dado['mercado__nome']
-        resultado = dado['resultado']
+        resultado = dado['resultado'].strip().lower()
         
         if mercado_nome not in resultados_por_mercado:
-            resultados_por_mercado[mercado_nome] = {'green_retorno': 0, 'red_valor': 0, 'percentual': 0}
+            resultados_por_mercado[mercado_nome] = {'contage_green': 0, 'contagen_red': 0, 'green_retorno': 0, 'red_valor': 0, 'percentual': 0}
 
-        if resultado == 'Green':
+        if resultado == 'green':
             resultados_por_mercado[mercado_nome]['green_retorno'] += dado['total_retorno']
-        elif resultado == 'Red':
+            resultados_por_mercado[mercado_nome]['contage_green'] += 1
+        
+        elif resultado == 'red':
             resultados_por_mercado[mercado_nome]['red_valor'] += dado['total_valor']
+            resultados_por_mercado[mercado_nome]['contagen_red'] += 1
 
         # Calcular a porcentagem de participação do mercado no volume total de apostas
-        resultados_por_mercado[mercado_nome]['percentual'] = (sum([resultados_por_mercado[mercado_nome]['green_retorno'], resultados_por_mercado[mercado_nome]['red_valor']]) / total_apostas) * 100
+        resultados_por_mercado[mercado_nome]['percentual'] = (
+            sum([
+                resultados_por_mercado[mercado_nome]['contage_green'], 
+                resultados_por_mercado[mercado_nome]['contagen_red']
+            ]) / total_apostas
+        ) * 100
             
     # Agora calcule a subtração (green_retorno - red_valor) para cada mercado
     for mercado, valores in resultados_por_mercado.items():
         resultado_final = valores['green_retorno'] - valores['red_valor']
-        print(f"Mercado: {mercado}, Resultado Final: {resultado_final}")
+        print(f"Mercado: {mercado}, Quantidade green: {valores['contage_green']}, Qunatidade red: {valores['contagen_red']}")
 
     return render(request, 'contas/home.html', {'listagem': listagem, 'resultados_por_mercado': resultados_por_mercado.items()})
 

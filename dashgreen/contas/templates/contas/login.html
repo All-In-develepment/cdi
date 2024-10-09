@@ -88,13 +88,4 @@
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{% static 'js/argon-dashboard.min.js?v=2.0.4' %}"></script>
 </body>
-<form method="POST">
-    {% csrf_token %}
-    <h2>Login</h2>
-    <label for="username">Username:</label>
-    <input type="text" name="username" required>
-    <label for="password">Password:</label>
-    <input type="password" name="password" required>
-    <button type="submit">Login</button>
-</form>
 </html>

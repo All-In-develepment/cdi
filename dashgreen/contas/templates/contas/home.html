@@ -3,7 +3,7 @@
 {% block title %}Dashgreen{% endblock %}
 
 {% block content %}
-<h1>Bem-vindo(a) {{ user.username }}</h1>
+<h1 class="text-white">Bem-vindo(a) {{ user.username }}</h1>
 <!--<div class="row">
 	<div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
 		<div class="card">
@@ -109,11 +109,11 @@
 	<div class="col-lg-7 mb-lg-0 mb-4">
 		<div class="card z-index-2 h-100">
 			<div class="card-header pb-0 pt-3 bg-transparent">
-				<h6 class="text-capitalize">Sales overview</h6>
-				<p class="text-sm mb-0">
+				<h6 class="text-capitalize">Apostas por mercado</h6>
+				<!--<p class="text-sm mb-0">
 					<i class="fa fa-arrow-up text-success"></i>
 					<span class="font-weight-bold">4% more</span> in 2021
-				</p>
+				</p>-->
 			</div>
 			<div class="card-body p-3">
 				<div class="chart">
@@ -149,14 +149,14 @@
 							</td>
 							<td>
 								<div class="text-center">
-									<p class="text-xs font-weight-bold mb-0">Total Apostado:</p>
-									<h6 class="text-sm mb-0">{{ valores.red_valor }}</h6>
+									<p class="text-xs font-weight-bold mb-0">Qtn. Green:</p>
+									<h6 class="text-sm mb-0">{{ valores.contage_green }}</h6>
 								</div>
 							</td>
 							<td>
 								<div class="text-center">
-									<p class="text-xs font-weight-bold mb-0">Retorno Total:</p>
-									<h6 class="text-sm mb-0">{{ valores.green_retorno }}</h6>
+									<p class="text-xs font-weight-bold mb-0">Qtn. Red:</p>
+									<h6 class="text-sm mb-0">{{ valores.contagen_red }}</h6>
 								</div>
 							</td>
 							<td class="align-middle text-sm">
